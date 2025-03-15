@@ -1,5 +1,5 @@
 from rest_framework import viewsets, permissions, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from django.core.files.storage import default_storage
 from azure.storage.blob import BlobServiceClient
@@ -80,4 +80,14 @@ class ROIAnalysisViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return ROIAnalysis.objects.filter(document__uploaded_by=self.request.user) 
+        return ROIAnalysis.objects.filter(document__uploaded_by=self.request.user)
+
+@api_view(['GET'])
+def health_check(request):
+    """
+    A simple health check endpoint to verify deployment
+    """
+    return Response({
+        "status": "healthy",
+        "message": "Backend is running successfully!"
+    }) 
