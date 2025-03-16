@@ -26,7 +26,7 @@ function Dashboard() {
       fetchDocuments()
       fetchROIAnalytics()
     }
-  }, [isAuthenticated])
+  }, [fetchDocuments, fetchROIAnalytics])
 
   const fetchDocuments = async () => {
     try {

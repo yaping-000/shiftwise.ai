@@ -21,10 +21,8 @@ function Analysis() {
   const isAuthenticated = useIsAuthenticated()
 
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchAnalysis()
-    }
-  }, [id, isAuthenticated])
+    fetchAnalysis()
+  }, [fetchAnalysis])
 
   const fetchAnalysis = async () => {
     try {
