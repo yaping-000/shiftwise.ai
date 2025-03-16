@@ -15,7 +15,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Build And Deploy
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install Dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Build React App
+        working-directory: frontend
+        run: npm run build
+        env:
+          CI: false
+          REACT_APP_API_URL: https://shiftwiseai-api.azurewebsites.net
+          REACT_APP_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+          REACT_APP_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
+          REACT_APP_REDIRECT_URI: https://mango-hill-05428050f.6.azurestaticapps.net
+
+      - name: Deploy to Azure Static Web Apps
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_TOKEN }}
@@ -23,9 +42,5 @@ jobs:
           action: "upload"
           app_location: "frontend"
           output_location: "build"
-        env:
-          CI: false
-          REACT_APP_API_URL: https://shiftwiseai-api.azurewebsites.net
-          REACT_APP_AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
-          REACT_APP_AZURE_AD_TENANT_ID: ${{ secrets.AZURE_AD_TENANT_ID }}
-          REACT_APP_REDIRECT_URI: https://mango-hill-05428050f.6.azurestaticapps.net
+          skip_app_build: true # Skip build since we already built it
+          api_location: "" # No API in this case
