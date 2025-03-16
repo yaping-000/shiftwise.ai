@@ -33,6 +33,7 @@ jobs:
           npm run build
         env:
           CI: false
+          REACT_APP_API_URL: https://shiftwiseai-api.azurewebsites.net
 
       - name: Build And Deploy
         id: builddeploy

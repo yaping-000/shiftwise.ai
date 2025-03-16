@@ -15,7 +15,7 @@ function ApiTest() {
     try {
       // Make the API call without authentication
       const response = await fetch(
-        `/api/test`, // Use relative URL since routing is handled by Static Web App
+        `${process.env.REACT_APP_API_URL}/api/test`,
         {
           method: "POST",
           headers: {
