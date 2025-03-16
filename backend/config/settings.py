@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DJANGO_DEBUG', 'False').lower() == 'true'
+DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
@@ -139,11 +139,9 @@ LOGIN_URL = 'admin:login'
 LOGIN_REDIRECT_URL = 'admin:index'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ],
 }
 
@@ -152,16 +150,35 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # CORS settings
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'https://mango-hill-05428050f.6.azurestaticapps.net',
-]
+CORS_ALLOW_ALL_ORIGINS = True  # For development only
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
 
 # Azure Storage settings
-AZURE_ACCOUNT_NAME = os.getenv('AZURE_STORAGE_ACCOUNT')
-AZURE_ACCOUNT_KEY = os.getenv('AZURE_STORAGE_KEY')
+AZURE_STORAGE_ACCOUNT = os.getenv('AZURE_STORAGE_ACCOUNT', 'shiftwiseaistorage')
+AZURE_STORAGE_KEY = os.getenv('AZURE_STORAGE_KEY', '')
 AZURE_CONTAINER = os.getenv('AZURE_STORAGE_CONTAINER', 'documents')
+AZURE_FUNCTION_URL = os.getenv('AZURE_FUNCTION_URL', 'https://shiftwiseai.azurewebsites.net/api/analyze')
+AZURE_FUNCTION_KEY = os.getenv('AZURE_FUNCTION_KEY', '')
+API_BASE_URL = os.getenv('API_BASE_URL', 'http://localhost:8000')
 
 # Azure AD B2C settings
 AZURE_AD_CLIENT_ID = os.getenv('AZURE_AD_CLIENT_ID')
@@ -175,3 +192,10 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
+
+# Media files (Uploaded files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Ensure the media directory exists
+os.makedirs(MEDIA_ROOT, exist_ok=True)
