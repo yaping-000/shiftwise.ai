@@ -1,26 +1,32 @@
 export const msalConfig = {
   auth: {
-    clientId: process.env.REACT_APP_AZURE_CLIENT_ID,
-    authority: `https://${process.env.REACT_APP_AZURE_TENANT_NAME}.b2clogin.com/${process.env.REACT_APP_AZURE_TENANT_ID}`,
-    knownAuthorities: [
-      `${process.env.REACT_APP_AZURE_TENANT_NAME}.b2clogin.com`,
-    ],
-    redirectUri: window.location.origin,
-    postLogoutRedirectUri: window.location.origin,
+    clientId: process.env.REACT_APP_AZURE_AD_CLIENT_ID,
+    authority: `https://login.microsoftonline.com/${process.env.REACT_APP_AZURE_AD_TENANT_ID}`,
+    redirectUri: process.env.REACT_APP_REDIRECT_URI,
+    postLogoutRedirectUri: process.env.REACT_APP_REDIRECT_URI,
+    navigateToLoginRequestUrl: true,
   },
   cache: {
-    cacheLocation: "localStorage",
+    cacheLocation: "sessionStorage",
     storeAuthStateInCookie: false,
   },
 }
 
 export const loginRequest = {
-  scopes: ["openid", "profile", "email"],
+  scopes: [
+    "openid",
+    "profile",
+    "email",
+    "User.Read",
+    `api://${process.env.REACT_APP_AZURE_AD_CLIENT_ID}/access_as_user`,
+  ],
 }
 
 export const protectedResources = {
   api: {
     endpoint: process.env.REACT_APP_API_URL,
-    scopes: [`${process.env.REACT_APP_AZURE_CLIENT_ID}/api.access`],
+    scopes: [
+      `api://${process.env.REACT_APP_AZURE_AD_CLIENT_ID}/access_as_user`,
+    ],
   },
 }
