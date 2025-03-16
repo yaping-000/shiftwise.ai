@@ -12,6 +12,14 @@ const api = axios.create({
   withCredentials: true, // Important for handling authentication cookies
 })
 
+// Add trailing slash to URLs that don't have one
+api.interceptors.request.use((config) => {
+  if (!config.url.endsWith("/")) {
+    config.url += "/"
+  }
+  return config
+})
+
 // Add a request interceptor for authentication
 api.interceptors.request.use(async (config) => {
   // Get the token from MSAL
