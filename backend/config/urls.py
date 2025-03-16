@@ -18,27 +18,25 @@ from django.urls import path, include
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from api.views import health_check
 
 # Swagger/OpenAPI documentation setup
 schema_view = get_schema_view(
     openapi.Info(
-        title="ShiftWise.AI API",
+        title="ShiftWise.ai API",
         default_version='v1',
-        description="API for ROI analysis of documents",
-        terms_of_service="https://www.shiftwise.ai/terms/",
-        contact=openapi.Contact(email="contact@shiftwise.ai"),
-        license=openapi.License(name="MIT License"),
+        description="API for ShiftWise.ai document analysis",
     ),
     public=True,
-    permission_classes=(permissions.AllowAny,),
+    permission_classes=[permissions.AllowAny],
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
+    path('health/', health_check, name='health_check'),
     
     # Swagger/OpenAPI documentation
-    path('api/swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('api/swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('api/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
