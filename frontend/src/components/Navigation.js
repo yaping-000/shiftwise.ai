@@ -1,11 +1,8 @@
 import React, { useEffect, useCallback } from "react"
 import { Link as RouterLink } from "react-router-dom"
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material"
-import {
-  useIsAuthenticated,
-  useMsal,
-  InteractionStatus,
-} from "@azure/msal-react"
+import { useIsAuthenticated, useMsal } from "@azure/msal-react"
+import { InteractionStatus } from "@azure/msal-browser"
 import { loginRequest } from "../auth/authConfig"
 
 function Navigation() {
