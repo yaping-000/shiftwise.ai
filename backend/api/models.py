@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 
 class Document(models.Model):
     title = models.CharField(max_length=255)
-    file = models.FileField(upload_to='documents/')
-    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    azure_url = models.URLField(max_length=1000, blank=True, null=True)  # Store Azure blob URL
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     analysis_complete = models.BooleanField(default=False)
     analysis_result = models.JSONField(null=True, blank=True)
