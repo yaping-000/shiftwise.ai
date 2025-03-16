@@ -15,7 +15,7 @@ function ApiTest() {
     try {
       // Make the API call without authentication
       const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/test/`,
+        `${process.env.REACT_APP_API_URL}/api/test`,
         {
           method: "POST",
           headers: {
