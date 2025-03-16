@@ -1,41 +1,57 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useCallback } from "react"
 import { Link as RouterLink } from "react-router-dom"
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material"
-import { useIsAuthenticated, useMsal } from "@azure/msal-react"
+import {
+  useIsAuthenticated,
+  useMsal,
+  InteractionStatus,
+} from "@azure/msal-react"
 import { loginRequest } from "../auth/authConfig"
 
 function Navigation() {
-  const { instance } = useMsal()
+  const { instance, inProgress } = useMsal()
   const isAuthenticated = useIsAuthenticated()
 
   useEffect(() => {
     // Debug logging
-    console.log("Auth Status:", { isAuthenticated })
-    console.log("MSAL Instance:", instance)
-    console.log("Environment Variables:", {
-      clientId: process.env.REACT_APP_AZURE_AD_CLIENT_ID,
-      tenantId: process.env.REACT_APP_AZURE_AD_TENANT_ID,
-      redirectUri: process.env.REACT_APP_REDIRECT_URI,
+    console.log("Auth Status:", {
+      isAuthenticated,
+      inProgress,
+      accounts: instance.getAllAccounts(),
     })
-  }, [isAuthenticated, instance])
+  }, [isAuthenticated, inProgress, instance])
 
-  const handleLogin = async () => {
+  const handleLogin = useCallback(async () => {
     try {
       console.log("Initiating login...")
-      await instance.loginRedirect(loginRequest)
+      const response = await instance.loginRedirect({
+        ...loginRequest,
+        prompt: "select_account",
+      })
+      console.log("Login response:", response)
     } catch (error) {
-      console.error("Login error:", error)
+      console.error("Login error:", {
+        name: error.name,
+        message: error.message,
+        errorCode: error.errorCode,
+        stack: error.stack,
+      })
     }
-  }
+  }, [instance])
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     try {
       console.log("Initiating logout...")
-      await instance.logoutRedirect()
+      await instance.logoutRedirect({
+        postLogoutRedirectUri: window.location.origin,
+      })
     } catch (error) {
       console.error("Logout error:", error)
     }
-  }
+  }, [instance])
+
+  // Don't show login/logout buttons while authentication is in progress
+  const showAuthButton = inProgress === InteractionStatus.None
 
   return (
     <AppBar position="static">
@@ -50,15 +66,16 @@ function Navigation() {
           <Button color="inherit" component={RouterLink} to="/upload">
             Upload
           </Button>
-          {isAuthenticated ? (
-            <Button color="inherit" onClick={handleLogout}>
-              Logout
-            </Button>
-          ) : (
-            <Button color="inherit" onClick={handleLogin}>
-              Login
-            </Button>
-          )}
+          {showAuthButton &&
+            (isAuthenticated ? (
+              <Button color="inherit" onClick={handleLogout}>
+                Logout
+              </Button>
+            ) : (
+              <Button color="inherit" onClick={handleLogin}>
+                Login
+              </Button>
+            ))}
         </Box>
       </Toolbar>
     </AppBar>
