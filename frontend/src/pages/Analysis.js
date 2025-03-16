@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { useParams } from "react-router-dom"
 import {
   Container,
@@ -20,11 +20,9 @@ function Analysis() {
   const { instance, accounts } = useMsal()
   const isAuthenticated = useIsAuthenticated()
 
-  useEffect(() => {
-    fetchAnalysis()
-  }, [fetchAnalysis])
+  const fetchAnalysis = useCallback(async () => {
+    if (!isAuthenticated) return
 
-  const fetchAnalysis = async () => {
     try {
       const token = await instance.acquireTokenSilent({
         scopes: protectedResources.api.scopes,
@@ -45,7 +43,11 @@ function Analysis() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [id, instance, accounts, isAuthenticated])
+
+  useEffect(() => {
+    fetchAnalysis()
+  }, [fetchAnalysis])
 
   if (!isAuthenticated) {
     return (

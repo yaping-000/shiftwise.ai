@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import {
   Container,
@@ -21,14 +21,9 @@ function Dashboard() {
   const { instance, accounts } = useMsal()
   const isAuthenticated = useIsAuthenticated()
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchDocuments()
-      fetchROIAnalytics()
-    }
-  }, [fetchDocuments, fetchROIAnalytics])
+  const fetchDocuments = useCallback(async () => {
+    if (!isAuthenticated) return
 
-  const fetchDocuments = async () => {
     try {
       const token = await instance.acquireTokenSilent({
         scopes: protectedResources.api.scopes,
@@ -47,9 +42,11 @@ function Dashboard() {
     } catch (error) {
       console.error("Error fetching documents:", error)
     }
-  }
+  }, [instance, accounts, isAuthenticated])
 
-  const fetchROIAnalytics = async () => {
+  const fetchROIAnalytics = useCallback(async () => {
+    if (!isAuthenticated) return
+
     try {
       const token = await instance.acquireTokenSilent({
         scopes: protectedResources.api.scopes,
@@ -84,7 +81,14 @@ function Dashboard() {
     } catch (error) {
       console.error("Error fetching ROI analytics:", error)
     }
-  }
+  }, [instance, accounts, isAuthenticated])
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchDocuments()
+      fetchROIAnalytics()
+    }
+  }, [isAuthenticated, fetchDocuments, fetchROIAnalytics])
 
   if (!isAuthenticated) {
     return (
