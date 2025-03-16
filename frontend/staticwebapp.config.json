@@ -4,10 +4,15 @@
     "exclude": [
       "/static/*",
       "/images/*",
-      "/*.{css,scss,js,png,gif,ico,jpg,svg}"
+      "/*.{css,scss,js,png,gif,ico,jpg,svg}",
+      "/api/*"
     ]
   },
   "routes": [
+    {
+      "route": "/api/*",
+      "rewrite": "https://shiftwiseai-api.azurewebsites.net/api/:splat"
+    },
     {
       "route": "/*",
       "serve": "/index.html",
